@@ -10,9 +10,13 @@ from urllib.error import HTTPError
 # Sets up the API
 from overbuff_scraper import OverbuffScraper
 
-SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
-json_string = os.environ.get("CREDENTIALS")
-creds = client.OAuth2Credentials.from_json(json_string)
+
+class Scraper:
+    pass
+
+
+credential_json = os.environ.get("CREDENTIALS")
+creds = client.OAuth2Credentials.from_json(credential_json)
 service = discovery.build('sheets', 'v4', http=creds.authorize(Http()))
 
 # ID of the spreadsheet
@@ -21,9 +25,22 @@ spreadsheet_id = os.environ.get('SHEET_ID')
 # print(OverbuffScraper.sr_fetch("swallama#1813"))
 # ^ For debugging ^
 
+
+def grab_column(spreadsheetid, column, sheetname=""):
+    if sheetname != "":
+        sheetname = sheetname + "!"
+
+    column_values = service\
+        .spreadsheets()\
+        .values()\
+        .get(spreadsheetId=spreadsheetid, range='{}{}'.format(sheetname, column + ":" + column))\
+        .execute()
+
+    return column_values.get('values')
+
+
 # Grabs all the values in the "Battletag" column of the spreadsheet
-battletag_column = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id, range='Roster!D:D').execute()
-battletags = battletag_column.get('values')
+battletags = grab_column(spreadsheet_id, "D", sheetname="Roster")
 
 print("Running scraper on " + datetime.datetime.strftime(datetime.datetime.now(), "%b %d, %I:%M%p"))
 for index, battletag in enumerate(battletags, start=1):
