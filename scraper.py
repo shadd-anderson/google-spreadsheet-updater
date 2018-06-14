@@ -1,16 +1,15 @@
 import datetime
 import os
 import time
-import urllib.request
 
-from bs4 import BeautifulSoup
 from apiclient import discovery
 from httplib2 import Http
 from oauth2client import client
 from urllib.error import HTTPError
-from urllib.parse import quote
 
 # Sets up the API
+from overbuff_scraper import OverbuffScraper
+
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
 json_string = os.environ.get("CREDENTIALS")
 creds = client.OAuth2Credentials.from_json(json_string)
@@ -19,20 +18,7 @@ service = discovery.build('sheets', 'v4', http=creds.authorize(Http()))
 # ID of the spreadsheet
 spreadsheet_id = os.environ.get('SHEET_ID')
 
-
-# fetches player SR from overbuff based on battletag
-def sr_fetch(player):
-    player_url = player.replace("#", "-")
-    player_page = 'https://www.overbuff.com/players/pc/' + quote(player_url)
-    req = urllib.request.Request(player_page)
-    req.add_header("User-agent", "overbuff-scraper 0.1")
-    page = urllib.request.urlopen(req)
-    page_contents = BeautifulSoup(page, 'html.parser')
-    sr_span = page_contents.find('span', attrs={'class': 'player-skill-rating'})
-    return sr_span.text.strip()
-
-
-# print(sr_fetch("swallama#1813"))
+# print(OverbuffScraper.sr_fetch("swallama#1813"))
 # ^ For debugging ^
 
 # Grabs all the values in the "Battletag" column of the spreadsheet
@@ -52,7 +38,7 @@ for index, battletag in enumerate(battletags, start=1):
 
         # Tries to get the sr from Overbuff and logs the SR.
         try:
-            player_sr = sr_fetch(player_tag)
+            player_sr = OverbuffScraper.sr_fetch(player_tag)
             print("{}'s SR: {}".format(player_tag, player_sr))
 
         # Catches incorrect battletags
