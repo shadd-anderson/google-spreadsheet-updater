@@ -20,7 +20,7 @@ creds = client.OAuth2Credentials.from_json(credential_json)
 service = discovery.build('sheets', 'v4', http=creds.authorize(Http()))
 
 # ID of the spreadsheet
-spreadsheet_id = os.environ.get('SHEET_ID')
+SPREADSHEET_ID = os.environ.get('SHEET_ID')
 
 # print(OverbuffScraper.sr_fetch("swallama#1813"))
 # ^ For debugging ^
@@ -40,8 +40,7 @@ def grab_column(spreadsheetid, column, sheetname=""):
 
 
 # Grabs all the values in the "Battletag" column of the spreadsheet
-battletags = grab_column(spreadsheet_id, "D", sheetname="Roster")
-
+battletags = grab_column(SPREADSHEET_ID, "D", sheetname="Roster")
 print("Running scraper on " + datetime.datetime.strftime(datetime.datetime.now(), "%b %d, %I:%M%p"))
 for index, battletag in enumerate(battletags, start=1):
     """Checks to make sure there's something in the cell. If not, moves on to the next one"""
@@ -73,9 +72,9 @@ for index, battletag in enumerate(battletags, start=1):
             body = {
                 'values': [[player_sr]]
             }
-            service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=('Roster!F' + str(index)),
+            service.spreadsheets().values().update(spreadsheetId=SPREADSHEET_ID, range=('Roster!F' + str(index)),
                                                    valueInputOption='USER_ENTERED', body=body).execute()
-            service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=('Roster!G' + str(index)),
+            service.spreadsheets().values().update(spreadsheetId=SPREADSHEET_ID, range=('Roster!G' + str(index)),
                                                    valueInputOption='USER_ENTERED', body={'values': [[""]]}).execute()
 
         # Handles a un-reported/unranked player
@@ -84,7 +83,7 @@ for index, battletag in enumerate(battletags, start=1):
             body = {
                 'values': [[r"**Not current**"]]
             }
-            service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=('Roster!G' + str(index)),
+            service.spreadsheets().values().update(spreadsheetId=SPREADSHEET_ID, range=('Roster!G' + str(index)),
                                                    valueInputOption='USER_ENTERED', body=body).execute()
 
         # If everything is good to go, updates the spreadsheet
@@ -92,9 +91,9 @@ for index, battletag in enumerate(battletags, start=1):
             body = {
                 'values': [[player_sr]]
             }
-            service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=('Roster!F' + str(index)),
+            service.spreadsheets().values().update(spreadsheetId=SPREADSHEET_ID, range=('Roster!F' + str(index)),
                                                    valueInputOption='USER_ENTERED', body=body).execute()
-            service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=('Roster!G' + str(index)),
+            service.spreadsheets().values().update(spreadsheetId=SPREADSHEET_ID, range=('Roster!G' + str(index)),
                                                    valueInputOption='USER_ENTERED', body={'values': [[""]]}).execute()
 
         time.sleep(1)
