@@ -66,7 +66,7 @@ class OverbuffScraper:
             update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), {'values': [[""]]})
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     battletags = grab_column(SPREADSHEET_ID, "D", sheetname="Roster")
     print("Running scraper on " + datetime.strftime(datetime.now(), "%b %d, %I:%M%p"))
     for index, battletag in enumerate(battletags, start=1):
@@ -82,3 +82,4 @@ if __name__ == 'main':
             time.sleep(1)
     print("Scraper successfully completed at " + datetime.strftime(datetime.now(), "%I:%M%p"))
     print("Please see above for errors")
+    # OverbuffScraper.update_srs("CaN#11778", 236)

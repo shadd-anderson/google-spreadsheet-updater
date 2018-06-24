@@ -5,16 +5,9 @@ from httplib2 import Http
 from oauth2client import client
 
 
-class Scraper:
-    pass
-
-
 credential_json = os.environ.get("CREDENTIALS")
 creds = client.OAuth2Credentials.from_json(credential_json)
 service = discovery.build('sheets', 'v4', http=creds.authorize(Http()))
-
-# print(OverbuffScraper.sr_fetch("swallama#1813"))
-# ^ For debugging ^
 
 
 def grab_column(spreadsheetid, column, sheetname=""):
