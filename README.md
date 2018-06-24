@@ -1,5 +1,5 @@
 # google-spreadsheet-updater
 
-Updates a spreadsheet of team rosters for Overwatch Pretenders
+scraper.py lays out a couple of basic methods to use to update a spreadsheet.
 
-** Will revise this code to make it more available rather than coded for one specific purpose **
+overbuff_scraper.py allows for more specific functionality for the rosters of Overwatch Pretenders (www.overwatchpretenders.com)
