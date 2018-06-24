@@ -7,7 +7,7 @@ from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 
-from scraper import update_cell, grab_column
+from spreadsheet_update import update_cell, grab_column
 
 SPREADSHEET_ID = os.environ.get('SHEET_ID')
 
