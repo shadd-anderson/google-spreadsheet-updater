@@ -23,13 +23,16 @@ class OverbuffScraper:
         page = urllib.request.urlopen(req)
         page_contents = BeautifulSoup(page, 'html.parser')
         sr_span = page_contents.find('span', attrs={'class': 'player-skill-rating'})
-        return sr_span.text.strip()
+        ispublic = True
+        if page_contents.find('i', attrs={'class': 'fa-lock'}) is not None:
+            ispublic = False
+        return sr_span.text.strip(), ispublic
 
     @staticmethod
     def update_srs(playertag, row):
         # Tries to get the sr from Overbuff and logs the SR.
         try:
-            player_sr = OverbuffScraper.sr_fetch(playertag)
+            player_sr, ispublic = OverbuffScraper.sr_fetch(playertag)
             # print("{}'s SR: {}".format(player_tag, player_sr))
 
         # Catches incorrect battletags
@@ -63,7 +66,11 @@ class OverbuffScraper:
                 'values': [[player_sr]]
             }
             update_cell(SPREADSHEET_ID, ('Roster!F' + str(row)), body)
-            update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), {'values': [[""]]})
+            if ispublic:
+                update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), {'values': [[""]]})
+            else:
+                update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), {'values': [["Private profile"]]})
+                print("{} has a private profile!".format(playertag))
 
 
 if __name__ == '__main__':
@@ -82,4 +89,4 @@ if __name__ == '__main__':
             time.sleep(1)
     print("Scraper successfully completed at " + datetime.strftime(datetime.now(), "%I:%M%p"))
     print("Please see above for errors")
-    # OverbuffScraper.update_srs("CaN#11778", 236)
+    # OverbuffScraper.update_srs("IMfierypanda#1638", 59)
