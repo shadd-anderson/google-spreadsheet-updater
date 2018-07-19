@@ -29,8 +29,8 @@ class OverbuffScraper:
         return sr_span.text.strip(), ispublic
 
     @staticmethod
-    def update_srs(playertag, row):
-        # Tries to get the sr from Overbuff and logs the SR.
+    def update_srs(playertag, row, date):
+        """Tries to get the sr from Overbuff and logs the SR."""
         try:
             player_sr, ispublic = OverbuffScraper.sr_fetch(playertag)
             # print("{}'s SR: {}".format(player_tag, player_sr))
@@ -42,7 +42,7 @@ class OverbuffScraper:
                 'values': [["""Battletag incorrect? (Case-sensitive) - If you see a whole column of these, """
                             """PM swallama NOW!!"""]]
             }
-            update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), body)
+            update_cell(SPREADSHEET_ID, ('Roster!H' + str(row)), body)
 
         # except UnicodeEncodeError:
         #     """Handles situations with odd-ball battletags"""
@@ -59,7 +59,7 @@ class OverbuffScraper:
             body = {
                 'values': [[r"**Not current**"]]
             }
-            update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), body)
+            update_cell(SPREADSHEET_ID, ('Roster!H' + str(row)), body)
         # If everything is good to go, updates the spreadsheet
         else:
             body = {
@@ -67,15 +67,17 @@ class OverbuffScraper:
             }
             update_cell(SPREADSHEET_ID, ('Roster!F' + str(row)), body)
             if ispublic:
-                update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), {'values': [[""]]})
+                update_cell(SPREADSHEET_ID, ('Roster!H' + str(row)), {'values': [[""]]})
+                update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), {'values': [[date]]})
             else:
-                update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), {'values': [["Private profile"]]})
+                update_cell(SPREADSHEET_ID, ('Roster!H' + str(row)), {'values': [["Private profile"]]})
                 print("{} has a private profile!".format(playertag))
 
 
 if __name__ == '__main__':
+    current_time = datetime.now()
     battletags = grab_column(SPREADSHEET_ID, "D", sheetname="Roster")
-    print("Running scraper on " + datetime.strftime(datetime.now(), "%b %d, %I:%M%p"))
+    print("Running scraper on " + datetime.strftime(current_time, "%b %d, %I:%M%p"))
     for index, battletag in enumerate(battletags, start=1):
         """Checks to make sure there's something in the cell. If not, moves on to the next one"""
         try:
@@ -85,8 +87,8 @@ if __name__ == '__main__':
 
         if player_tag != 'Battletag':
             """Skips past the column headers"""
-            OverbuffScraper.update_srs(player_tag, index)
+            OverbuffScraper.update_srs(player_tag, index, datetime.strftime(current_time, "%d/%m/%y"))
             time.sleep(1)
     print("Scraper successfully completed at " + datetime.strftime(datetime.now(), "%I:%M%p"))
     print("Please see above for errors")
-    # OverbuffScraper.update_srs("IMfierypanda#1638", 59)
+    # OverbuffScraper.update_srs("SolusPrime42#1304", 188, datetime.strftime(current_time, "%d/%m/%y"))
