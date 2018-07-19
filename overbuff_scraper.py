@@ -51,7 +51,7 @@ class OverbuffScraper:
         #         'values': [[player_sr]]
         #     }
         #     update_cell(SPREADSHEET_ID, ('Roster!F' + str(row)), body)
-        #     update_cell(SPREADSHEET_ID, ('Roster!G' + str(row)), {'values': [[""]]})
+        #     update_cell(SPREADSHEET_ID, ('Roster!H' + str(row)), {'values': [[""]]})
 
         # Handles a un-reported/unranked player
         except AttributeError:
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         if player_tag != 'Battletag':
             """Skips past the column headers"""
             OverbuffScraper.update_srs(player_tag, index, datetime.strftime(current_time, "%d/%m/%y"))
-            time.sleep(1)
+            time.sleep(2)
     print("Scraper successfully completed at " + datetime.strftime(datetime.now(), "%I:%M%p"))
     print("Please see above for errors")
     # OverbuffScraper.update_srs("SolusPrime42#1304", 188, datetime.strftime(current_time, "%d/%m/%y"))
