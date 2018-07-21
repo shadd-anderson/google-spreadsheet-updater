@@ -34,7 +34,7 @@ class OverbuffScraper:
         return sr_span.text.strip(), ispublic
 
     @staticmethod
-    def update_srs(playertag, row, date, career_high):
+    def update_srs(playertag, row, date):
         """Tries to get the sr from Overbuff and logs the SR."""
         try:
             player_sr, ispublic = OverbuffScraper.sr_fetch(playertag)
@@ -74,8 +74,6 @@ class OverbuffScraper:
             if ispublic:
                 update_cell(SPREADSHEET_ID, (notes_column + str(row)), {'values': [[""]]})
                 update_cell(SPREADSHEET_ID, (last_updated_column + str(row)), {'values': [[date]]})
-                if len(career_high) == 0 or player_sr > career_high[0]:
-                    update_cell(SPREADSHEET_ID, (career_high_column + str(row)), {'values': [[player_sr]]})
             else:
                 update_cell(SPREADSHEET_ID, (notes_column + str(row)), {'values': [["Private profile"]]})
                 print("{} has a private profile!".format(playertag))
@@ -84,6 +82,7 @@ class OverbuffScraper:
 if __name__ == '__main__':
     current_time = datetime.now()
     battletags = grab_column(SPREADSHEET_ID, "D", sheetname="Roster")
+    srs = grab_column(SPREADSHEET_ID, "F", sheetname="Roster")
     career_highs = grab_column(SPREADSHEET_ID, "G", sheetname="Roster")
     print("Running scraper on " + datetime.strftime(current_time, "%b %d, %I:%M%p"))
     for index, battletag in enumerate(battletags, start=1):
@@ -97,12 +96,12 @@ if __name__ == '__main__':
             """Skips past the column headers"""
             OverbuffScraper.update_srs(playertag=player_tag,
                                        row=index,
-                                       date=datetime.strftime(current_time, "%d/%m/%y"),
-                                       career_high=career_highs[index])
+                                       date=datetime.strftime(current_time, "%d/%m/%y"))
+            if len(career_highs[index-1]) == 0 or srs[index-1][0] > career_highs[index-1][0]:
+                update_cell(SPREADSHEET_ID, (career_high_column + str(index)), {'values': [[srs[index-1][0]]]})
             time.sleep(2)
     print("Scraper successfully completed at " + datetime.strftime(datetime.now(), "%I:%M%p"))
     print("Please see above for errors")
     # OverbuffScraper.update_srs("SolusPrime42#1304",
     #                            188,
-    #                            datetime.strftime(current_time, "%d/%m/%y"),
-    #                            career_highs[188])
+    #                            datetime.strftime(current_time, "%d/%m/%y"))
