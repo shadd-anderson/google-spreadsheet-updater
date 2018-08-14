@@ -81,10 +81,8 @@ class OverbuffScraper:
 
 if __name__ == '__main__':
     current_time = datetime.now()
-    battletags = grab_column(SPREADSHEET_ID, "D", sheetname="Roster")
-    srs = grab_column(SPREADSHEET_ID, "F", sheetname="Roster")
-    career_highs = grab_column(SPREADSHEET_ID, "G", sheetname="Roster")
     print("Running scraper on " + datetime.strftime(current_time, "%b %d, %I:%M%p"))
+    battletags = grab_column(SPREADSHEET_ID, "D", sheetname="Roster")
     for index, battletag in enumerate(battletags, start=1):
         """Checks to make sure there's something in the cell. If not, moves on to the next one"""
         try:
@@ -97,9 +95,21 @@ if __name__ == '__main__':
             OverbuffScraper.update_srs(playertag=player_tag,
                                        row=index,
                                        date=datetime.strftime(current_time, "%d/%m/%y"))
-            if len(career_highs[index-1]) == 0 or srs[index-1][0] > career_highs[index-1][0]:
-                update_cell(SPREADSHEET_ID, (career_high_column + str(index)), {'values': [[srs[index-1][0]]]})
             time.sleep(2)
+
+    srs = grab_column(SPREADSHEET_ID, "F", sheetname="Roster")
+    career_highs = grab_column(SPREADSHEET_ID, "G", sheetname="Roster")
+    for index, battletag in enumerate(battletags, start=1):
+        try:
+            player_tag = battletag[0]
+        except IndexError:
+            continue
+
+        if player_tag != 'Battletag':
+            if len(career_highs[index-1]) == 0 or int(srs[index-1][0]) > int(career_highs[index-1][0]):
+                update_cell(SPREADSHEET_ID, (career_high_column + str(index)), {'values': [[srs[index-1][0]]]})
+                print("{} has a new career high!".format(player_tag))
+
     print("Scraper successfully completed at " + datetime.strftime(datetime.now(), "%I:%M%p"))
     print("Please see above for errors")
     # OverbuffScraper.update_srs("SolusPrime42#1304",
