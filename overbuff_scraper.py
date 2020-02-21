@@ -112,6 +112,6 @@ if __name__ == '__main__':
 
     print("Scraper successfully completed at " + datetime.strftime(datetime.now(), "%I:%M%p"))
     print("Please see above for errors")
-    # OverbuffScraper.update_srs("SolusPrime42#1304",
-    #                            188,
+    # OverbuffScraper.update_srs("MilkSteak#11366",
+    #                            157,
     #                            datetime.strftime(current_time, "%d/%m/%y"))
